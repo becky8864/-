@@ -2,101 +2,13 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>失控的滑動 - 數位暴力與演算法模擬</title>
     <!-- 引入 Tailwind 與 FontAwesome (含 Threads logo) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        /* 移除 touch-action: none，加入 overscroll-behavior-y: none 防止手機瀏覽器下拉刷新 */
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #0a0a0a; color: white; overflow: hidden; margin: 0; overscroll-behavior-y: none;}
-        
-        /* 模擬手機外框 */
-        .app-container { width: 100%; height: 100vh; max-width: 480px; margin: 0 auto; background: #000; position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(255,255,255,0.1); border-left: 1px solid #222; border-right: 1px solid #222; }
-        .video-feed { height: 100%; width: 100%; position: relative; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .video-item { height: 100%; width: 100%; position: relative; background-size: cover; background-position: center; }
-        .video-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 20%, rgba(0,0,0,0.95) 100%); pointer-events: none; }
-
-        /* 演算法監控面板 & 進度條 */
-        .algorithm-panel { position: absolute; top: 10px; left: 10px; right: 10px; background: rgba(0, 0, 0, 0.85); border: 1px solid #4ade80; border-radius: 12px; padding: 12px; z-index: 40; backdrop-filter: blur(8px); font-size: 11px; box-shadow: 0 0 15px rgba(74, 222, 128, 0.1); transition: all 0.3s; pointer-events: none;}
-        .algorithm-panel.danger-mode { border-color: #ef4444; box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); animation: pulsePanel 1s infinite; }
-        .algorithm-panel.safe-mode { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-        @keyframes pulsePanel { 0% { border-color: #ef4444; } 50% { border-color: #991b1b; } 100% { border-color: #ef4444; } }
-        
-        .progress-badge { position: absolute; top: 115px; left: 15px; background: rgba(0, 0, 0, 0.7); color: #93c5fd; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 35; border: 1px solid #3b82f6; backdrop-filter: blur(5px); transition: all 0.3s;}
-        .progress-badge.urgent { background: rgba(239, 68, 68, 0.8); color: white; border-color: #fca5a5; animation: pulseBadge 1s infinite;}
-        @keyframes pulseBadge { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* 青少年保護標籤 */
-        .teen-badge { position: absolute; top: 115px; right: 15px; background: rgba(16, 185, 129, 0.85); color: white; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; z-index: 35; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.5); border: 1px solid #34d399;}
-
-        /* 特效 */
-        .glitch-heavy { animation: glitch-anim 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; filter: hue-rotate(90deg) contrast(200%) saturate(150%) blur(1px); }
-        @keyframes glitch-anim { 0% { transform: translate(0) skew(0deg); } 20% { transform: translate(-5px, 5px) skew(-10deg); } 40% { transform: translate(-5px, -5px) skew(10deg); } 60% { transform: translate(5px, 5px) skew(-5deg); } 80% { transform: translate(5px, -5px) skew(5deg); } 100% { transform: translate(0) skew(0deg); } }
-
-        /* UI 元件 */
-        .side-actions { position: absolute; right: 15px; bottom: 120px; display: flex; flex-direction: column; gap: 18px; align-items: center; z-index: 30; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; transition: transform 0.2s; }
-        .action-btn i { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .action-btn span { font-size: 11px; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
-        .report-btn { color: #fca5a5; }
-        .report-btn .icon-bg { border: 1px solid rgba(239,68,68,0.5); background: rgba(0,0,0,0.6); }
-        .report-btn.reported .icon-bg { background: #ef4444; border-color: #f87171; }
-        .report-btn.reported i { color: white; }
-        .video-info { position: absolute; left: 15px; bottom: 100px; width: 70%; z-index: 30; text-shadow: 0 2px 4px rgba(0,0,0,0.8); pointer-events: none;}
-        .video-info button { pointer-events: auto; }
-        
-        .swipe-guide { position: absolute; top: 40%; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.75); padding: 25px 35px; border-radius: 25px; z-index: 50; pointer-events: none; border: 2px solid rgba(59,130,246,0.5); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: opacity 0.5s; backdrop-filter: blur(5px);}
-        .swipe-icon { font-size: 50px; color: #60a5fa; animation: swipeUpAnim 1.5s infinite ease-in-out; }
-        @keyframes swipeUpAnim { 0% { transform: translateY(20px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-40px); opacity: 0; } }
-
-        /* 新手教學 */
-        .tutorial-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 100; backdrop-filter: blur(3px); transition: opacity 0.3s; }
-        .tut-highlight { box-shadow: 0 0 0 6px rgba(59,130,246,0.8), 0 0 30px rgba(59,130,246,0.8); border-radius: 12px; background: rgba(0,0,0,0.4); pointer-events: none; transition: all 0.3s;}
-        
-        /* 模態框與底部選單 */
-        .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 150; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(15px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .modal.active { opacity: 1; pointer-events: auto; }
-        .bottom-sheet { position: absolute; bottom: -100%; left: 0; width: 100%; background: #111; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 80; transition: bottom 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; box-shadow: 0 -5px 25px rgba(0,0,0,0.8); border-top: 1px solid #333; }
-        .bottom-sheet.open { bottom: 0; }
-        .comment-list { height: 60vh; overflow-y: auto; padding: 15px; scroll-behavior: smooth; }
-        .comment-item { display: flex; gap: 10px; margin-bottom: 15px; }
-        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; background: #333; flex-shrink: 0; display: flex; justify-content: center; align-items: center; color: #aaa; border: 1px solid #555; overflow: hidden;}
-        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* 分享面板專用 */
-        .share-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; padding: 20px; padding-bottom: 40px;}
-        .share-icon-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.2s;}
-        .share-icon-btn:active { transform: scale(0.9); }
-        .share-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
-
-        .poll-btn { transition: all 0.2s; }
-        .poll-btn:active { transform: scale(0.95); }
-        .poll-btn.voted { background: linear-gradient(135deg, #ef4444, #b91c1c); color: white; border-color: #f87171; }
-        
-        /* 假通知彈窗 */
-        .notification-container { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 90; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-        .fake-notification { background: rgba(30, 30, 30, 0.95); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.8); border-left: 4px solid #ef4444; transform: translateY(-100%); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .fake-notification.show { transform: translateY(0); opacity: 1; }
-
-        /* 漸進式學習動畫 */
-        .learning-block { opacity: 0; max-height: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); transform: translateY(-10px); }
-        .learning-block.visible { opacity: 1; max-height: 300px; transform: translateY(0); margin-top: 12px; }
-        
-        /* 回饋過場動畫 */
-        .feedback-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .feedback-overlay.active { opacity: 1; pointer-events: auto; }
-
-        /* 演算法鎖死特效 */
-        .locked-btn { opacity: 0.5; filter: grayscale(100%); position: relative; overflow: hidden;}
-        .locked-btn::after { content: '鎖死'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg); color: #ff0000; font-weight: 900; font-size: 24px; text-shadow: 0 0 10px black; border: 3px solid red; padding: 2px 10px; border-radius: 8px; z-index: 10;}
-        
-        /* 倒數計時器 */
-        .timer-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #ef4444; display: flex; justify-content: center; align-items: center; font-size: 32px; font-weight: 900; color: #ef4444; margin: 0 auto 15px; box-shadow: 0 0 20px rgba(239,68,68,0.5), inset 0 0 20px rgba(239,68,68,0.5); text-shadow: 0 0 10px red; }
-        .timer-urgent { animation: pulseTimer 0.5s infinite alternate; }
-        @keyframes pulseTimer { from { transform: scale(1); border-color: #ef4444; color: #ef4444;} to { transform: scale(1.1); border-color: #ff0000; color: #ff0000;} }
-    </style>
+    <!-- 引入外部 CSS 檔案 -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -114,11 +26,6 @@
             <div><span class="text-gray-400">主動防衛檢舉：</span><span id="reportCountDisplay" class="text-blue-400 font-bold">0 次</span></div>
             <div id="progressRow"><span class="text-gray-400">當前影片進度：</span><span class="text-blue-300 font-bold" id="progressText"><span id="currentVideoNum">1</span> / <span id="totalVideoCountBadge">10</span></span></div>
         </div>
-    </div>
-
-    <!-- 進度目標指示器 -->
-    <div class="progress-badge" id="progressBadge" style="display: none;">
-        <i class="fas fa-play-circle mr-1"></i> 影片進度：<span id="currentVideoNum">1</span> / <span id="totalVideoCountBadge">10</span>
     </div>
 
     <!-- 青少年標籤 -->
@@ -157,7 +64,7 @@
             <button onclick="closeSheet('commentsSheet')" class="absolute right-4 top-3 text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
         </div>
         <div class="comment-list" id="commentList"></div>
-        <div class="p-3 border-t border-gray-800 flex gap-2 items-center bg-black">
+        <div class="p-3 border-t border-gray-800 flex gap-2 items-center bg-black safe-bottom-padding">
             <div class="comment-avatar" id="myCommentAvatarContainer"><img id="myCommentAvatar" src="" alt="avatar"></div>
             <input type="text" id="commentInput" placeholder="留下你想說的話..." class="bg-gray-800 text-white text-sm rounded-full px-4 py-2 flex-grow outline-none border border-gray-700 focus:border-blue-500" onkeydown="if(event.key === 'Enter') postComment()">
             <button onclick="postComment()" class="text-blue-500 font-bold px-3 py-1 hover:text-blue-400 text-xl"><i class="fas fa-paper-plane"></i></button>
@@ -170,7 +77,7 @@
             分享給朋友
             <button onclick="closeSheet('shareSheet')" class="absolute right-4 top-3 text-gray-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
         </div>
-        <div class="share-grid">
+        <div class="share-grid safe-bottom-padding">
             <div class="share-icon-btn" onclick="executeShare('LINE')">
                 <div class="share-icon bg-[#00B900]"><i class="fab fa-line"></i></div>
                 <span class="text-xs text-gray-300">LINE</span>
@@ -192,8 +99,8 @@
         </div>
     </div>
 
-    <!-- 底部導覽列 -->
-    <div class="absolute bottom-0 left-0 right-0 h-16 bg-black border-t border-gray-900 flex justify-around items-center z-40 pb-2">
+    <!-- 底部導覽列 (加入 bottom-nav 類別以修正安全距離) -->
+    <div class="absolute bottom-0 left-0 right-0 bg-black border-t border-gray-900 flex justify-around items-center z-40 bottom-nav">
         <div class="flex flex-col items-center text-white"><i class="fas fa-home text-xl"></i><span class="text-[10px] mt-1">首頁</span></div>
         <div class="flex flex-col items-center text-gray-600"><i class="fas fa-search text-xl"></i><span class="text-[10px] mt-1">搜尋</span></div>
         <div class="flex flex-col items-center"><i class="fas fa-plus-square text-3xl text-white shadow-[0_0_10px_rgba(255,255,255,0.3)]"></i></div>
@@ -206,7 +113,8 @@
 
     <!-- 登入畫面 -->
     <div class="modal active" id="startModal">
-        <div class="bg-gray-900 p-8 rounded-3xl w-[90%] max-w-sm text-center border border-gray-700 shadow-2xl relative overflow-hidden" id="loginForm">
+        <!-- 修正彈窗最大高度為 dvh 避免下方切到 -->
+        <div class="bg-gray-900 p-8 rounded-3xl w-[90%] max-w-sm text-center border border-gray-700 shadow-2xl relative overflow-y-auto max-h-[95dvh]" id="loginForm">
             <h1 class="text-3xl font-black mb-1 text-white">建立帳號</h1>
             <div class="text-gray-400 text-xs mb-4">加入全球最大的短影音社群</div>
             
@@ -298,7 +206,7 @@
 
     <!-- 漸進式學習結局畫面 (含個人風險報告) -->
     <div class="modal" id="endModal">
-        <div class="bg-gray-900 p-5 rounded-2xl w-[95%] max-w-md text-center border-2 shadow-2xl relative overflow-y-auto max-h-[95vh] pb-8" id="endCard">
+        <div class="bg-gray-900 p-5 rounded-2xl w-[95%] max-w-md text-center border-2 shadow-2xl relative overflow-y-auto max-h-[95dvh] pb-8" id="endCard">
             <div id="endIcon" class="mx-auto w-16 h-16 rounded-full flex items-center justify-center border-4 border-gray-900 text-3xl mb-2 mt-2"></div>
             <h2 class="text-2xl font-black mb-1 text-white" id="endTitle">結局標題</h2>
             <p class="text-sm font-bold mb-4" id="endSubtitle">結局副標</p>
@@ -329,7 +237,7 @@
                 </div>
             </div>
 
-    <!-- 🌟 防身知識總結 🌟 -->
+            <!-- 🌟 防身知識總結 🌟 -->
             <div class="text-left space-y-3 mb-2">
                 <div class="text-center text-yellow-400 text-xs mb-3 font-bold bg-gray-800 py-1 rounded">👇 請將以下防身知識牢記在心 👇</div>
                 
@@ -377,6 +285,8 @@
                     <i class="fas fa-redo mr-2"></i> 再體驗一次！
                 </button>
             </div>
+        </div>
+    </div>
 
 <!-- 引入 JavaScript -->
 <script src="script.js"></script>
