@@ -61,7 +61,7 @@ const originalVideoData = [
         { author: "User999", text: "我也想學這個排舞！", likes: 8, isLiked: false, type: 'neutral' },
         { author: "J_Boy", text: "跳得比原版還好", likes: 30, isLiked: false, type: 'neutral' }
     ]},
-    { type: 'normal', dangerLevel: 0, author: '@CutePets_Daily', title: '我家阿金今天又在搞笑了🐶', imageUrl: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80', likes: 58000, commentsCount: 1420, comments: [
+    { type: 'normal', dangerLevel: 0, author: '@CutePets_Daily', title: '我家黑金今天又在搞笑了🐶', imageUrl: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80', likes: 58000, commentsCount: 1420, comments: [
         { author: "愛狗人士", text: "融化了啦😍", likes: 120, isLiked: false, type: 'neutral' },
         { author: "狗狗控", text: "阿金就是有一種魔力", likes: 85, isLiked: false, type: 'neutral' },
         { author: "鏟屎官日常", text: "我家那隻只會拆家🥲", likes: 210, isLiked: false, type: 'neutral' },
