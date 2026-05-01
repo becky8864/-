@@ -220,7 +220,7 @@
             <div class="space-y-5 text-left">
                 <div>
                     <label class="text-xs text-blue-300 font-bold ml-2">👉 為了保護隱私，請輸入你的「暱稱」</label>
-                    <input type="text" id="regName" placeholder="請勿使用真實本名 (例: 吃瓜群眾)" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mt-1" value="">
+                    <input type="text" id="regName" placeholder="請勿使用本名" class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 mt-1" value="">
                 </div>
                 <div>
                     <label class="text-xs text-blue-300 font-bold ml-2 block">👉 試著輸入不同年齡 (如 12、15 或 18 歲)</label>
@@ -328,36 +328,32 @@
                 </div>
             </div>
 
-            <!-- 🌟 互動式漸進學習區塊 🌟 -->
-            <div class="text-left">
-                <div class="text-center text-yellow-400 text-xs mb-3 font-bold bg-gray-800 py-1 rounded animate-pulse">👇 依序點擊按鈕，解鎖防身知識 👇</div>
+    <!-- 🌟 防身知識總結 🌟 -->
+            <div class="text-left space-y-3 mb-2">
+                <div class="text-center text-yellow-400 text-xs mb-3 font-bold bg-gray-800 py-1 rounded">👇 請將以下防身知識牢記在心 👇</div>
                 
-                <div class="grid grid-cols-3 gap-2 mb-4">
-                    <button onclick="unlockLearning('rule5no', this)" class="bg-[#4a0404] border border-[#ef4444] text-[#fca5a5] py-2 rounded-lg text-sm font-black shadow-[0_2px_10px_rgba(239,68,68,0.3)] transition">不</button>
-                    <button onclick="unlockLearning('rule4yes', this)" class="bg-[#022c22] border border-[#10b981] text-[#6ee7b7] py-2 rounded-lg text-sm font-black shadow-[0_2px_10px_rgba(16,185,129,0.3)] transition">要</button>
-                    <button onclick="unlockLearning('ruleiwin', this)" class="bg-[#1e3a8a] border border-[#3b82f6] text-[#93c5fd] py-2 rounded-lg text-sm font-black shadow-[0_2px_10px_rgba(59,130,246,0.3)] transition">求助</button>
-                </div>
-
-                <div id="rule5no" class="learning-block bg-[#4a0404] border-2 border-[#ef4444] rounded-xl p-4 shadow-lg">
+                <div class="bg-[#4a0404] border-2 border-[#ef4444] rounded-xl p-4 shadow-lg">
                     <h3 class="text-[#f87171] font-black text-lg mb-2 flex items-center gap-2"><i class="fas fa-ban"></i> 遇到私密影像：五不</h3>
                     <ul class="text-white text-sm space-y-1.5 font-bold ml-1">
-                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不違反意願、不聽從自拍</li>
-                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不倉促傳訊、不轉寄隱私照</li>
+                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不違反意願</li>
+                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不聽從自拍</li>
+                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不倉促傳訊</li>
+                        <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不轉寄隱私照</li>
                         <li><span class="text-[#ef4444] mr-2 text-lg">✖</span> 不取笑被害</li>
                     </ul>
                 </div>
                 
-                <div id="rule4yes" class="learning-block bg-[#022c22] border-2 border-[#10b981] rounded-xl p-4 shadow-lg">
+                <div class="bg-[#022c22] border-2 border-[#10b981] rounded-xl p-4 shadow-lg">
                     <h3 class="text-[#34d399] font-black text-lg mb-2 flex items-center gap-2"><i class="fas fa-check-circle"></i> 應對網路霸凌：四要</h3>
                     <ul class="text-white text-sm space-y-1.5 font-bold ml-1">
                         <li><span class="text-[#10b981] mr-2 text-lg">✔</span> 要告訴師長</li>
                         <li><span class="text-[#10b981] mr-2 text-lg">✔</span> <span class="bg-[#064e3b] px-1.5 py-0.5 rounded text-[#fde047] underline decoration-[#fde047] decoration-2">要截圖存證</span> (保留證據)</li>
                         <li><span class="text-[#10b981] mr-2 text-lg">✔</span> 要記得報警</li>
-                        <li><span class="text-[#10b981] mr-2 text-lg">✔</span> <span class="bg-[#064e3b] px-1.5 py-0.5 rounded text-[#fde047] underline decoration-[#fde047] decoration-2">要檢舉對方</span> (聯絡 iWIN)</li>
+                        <li><span class="text-[#10b981] mr-2 text-lg">✔</span> <span class="bg-[#064e3b] px-1.5 py-0.5 rounded text-[#fde047] underline decoration-[#fde047] decoration-2">要檢舉對方</span> </li>
                     </ul>
                 </div>
 
-                <div id="ruleiwin" class="learning-block bg-[#172554] border-2 border-[#3b82f6] rounded-xl p-4 shadow-lg flex items-center gap-4">
+                <div class="bg-[#172554] border-2 border-[#3b82f6] rounded-xl p-4 shadow-lg flex items-center gap-4">
                     <div class="bg-[#2563eb] text-white w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-2xl shadow-[0_0_15px_rgba(59,130,246,0.8)]">
                         <i class="fas fa-hands-helping"></i>
                     </div>
@@ -371,13 +367,15 @@
                 </div>
             </div>
 
-            <button id="restartBtn" onclick="location.reload()" class="w-full bg-gray-200 hover:bg-white text-black font-black py-4 rounded-xl transition text-lg mt-6 hidden shadow-[0_0_20px_rgba(255,255,255,0.5)]">
-                <i class="fas fa-redo mr-2"></i> 重新進行測驗
-            </button>
-        </div>
-    </div>
-
-</div>
+            <!-- 結束與重來按鈕 -->
+            <div class="flex flex-col gap-3 mt-6">
+                <button onclick="finishExperience()" class="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-400 hover:to-teal-400 text-white font-black py-4 rounded-xl transition text-lg shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+                    <i class="fas fa-check-circle mr-2"></i> 我學會了！結束體驗～
+                </button>
+                <button onclick="location.reload()" class="w-full bg-gray-800 hover:bg-gray-700 border border-gray-600 text-gray-300 font-bold py-3.5 rounded-xl transition text-base">
+                    <i class="fas fa-redo mr-2"></i> 再體驗一次！
+                </button>
+            </div>
 
 <!-- 引入 JavaScript -->
 <script src="script.js"></script>
