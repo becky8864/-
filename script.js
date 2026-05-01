@@ -209,14 +209,89 @@ function fakeAgeAndEnter() {
     startTutorial();
 }
 
-// --- 新手教學 ---
+// --- 新手教學設定 (調整位置避免擋住目標) ---
 let tutStep = 0;
 const tutConfig = [
-    { target: 'algoPanel', title: '第 1 步：演算法監控', desc: '上方的面板會即時顯示演算法是如何紀錄你的不良嗜好。<b>請隨時注意變化！</b>', top: '180px', left: '50%', transform: 'translateX(-50%)' },
-    { target: 'actions-0', title: '第 2 步：互動陷阱', desc: '按讚、留言會增加不良指數。<br>遇到危險內容可以隨時按下「檢舉」來提升防護力！', top: '50%', left: '35%', transform: 'translateY(-50%)' },
-    { target: 'reportBtnItem-0', title: '第 3 步：主動防禦', desc: '這是你的保護盾！🛡️<br>發現惡意影片？請果斷按下檢舉！', top: '70%', left: '40%', transform: 'translateY(-50%)' },
+    { target: 'algoPanel', title: '第 1 步：演算法監控', desc: '上方的面板會即時顯示演算法是如何紀錄你的不良嗜好。<b>請隨時注意變化！</b>', top: '150px', left: '50%', transform: 'translateX(-50%)' },
+    // 放在左側避免擋住右側的按鈕列
+    { target: 'actions-0', title: '第 2 步：互動陷阱', desc: '按讚、留言會增加不良指數。<br>遇到危險內容可以隨時按下「檢舉」來提升防護力！', top: '40%', left: '20px', transform: 'none' }, 
+    // 放在左下側避免擋住右下角的檢舉按鈕
+    { target: 'reportBtnItem-0', title: '第 3 步：主動防禦', desc: '這是你的保護盾！🛡️<br>發現惡意影片？請果斷按下檢舉！', bottom: '130px', left: '20px', transform: 'none' }, 
     { target: null, title: '第 4 步：挑戰開始', desc: '本次模擬加入了動態隨機推播。<br>滑到最後將有「終極危機考驗」與「個人報告」，請開始你的挑戰！', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', btnText: '開始滑動' }
 ];
+
+function showTutStep(step) {
+    SFX.click();
+    tutStep = step;
+    const config = tutConfig[step];
+    const tooltip = document.getElementById('tutorialTooltip');
+    
+    // 1. 清除上一步驟的高亮狀態與 z-index
+    document.querySelectorAll('.tut-highlight').forEach(el => { 
+        el.classList.remove('tut-highlight'); 
+        el.style.zIndex = ''; 
+        el.style.position = '';
+        // 恢復父元素的 z-index
+        const parentAction = el.closest('.side-actions');
+        if(parentAction) parentAction.style.zIndex = ''; 
+    });
+
+    // 2. 動態設定 tooltip 位置 (加入 'auto' 避免上一步驟的屬性殘留)
+    tooltip.style.top = config.top || 'auto'; 
+    tooltip.style.bottom = config.bottom || 'auto';
+    tooltip.style.left = config.left || 'auto'; 
+    tooltip.style.right = config.right || 'auto';
+    tooltip.style.transform = config.transform || 'none';
+    
+    document.getElementById('tutTitle').innerHTML = config.title;
+    document.getElementById('tutDesc').innerHTML = config.desc;
+    document.getElementById('tutNextBtn').innerText = config.btnText || '下一步';
+    
+    let dots = '';
+    for(let i=0; i<tutConfig.length; i++) dots += `<div class="w-2.5 h-2.5 rounded-full ${i === step ? 'bg-white' : 'bg-blue-800'}"></div>`;
+    document.getElementById('tutDots').innerHTML = dots;
+
+    // 3. 套用新的高亮特效，強制把目標元素浮出遮罩層之上
+    if (config.target) {
+        const targetEl = document.getElementById(config.target);
+        if(targetEl) { 
+            targetEl.classList.add('tut-highlight'); 
+            targetEl.style.zIndex = '201'; // 大於 tutorial-overlay 的 100
+            
+            // 確保元素具備定位屬性才能套用 z-index
+            if (window.getComputedStyle(targetEl).position === 'static') {
+                targetEl.style.position = 'relative'; 
+            }
+            
+            // 【關鍵】如果目標是被包在右側選單(.side-actions)裡，必須連同父元素一起拉高層級，才不會被遮罩蓋住
+            const parentAction = targetEl.closest('.side-actions');
+            if(parentAction) parentAction.style.zIndex = '201';
+        }
+    }
+
+    document.getElementById('tutNextBtn').onclick = () => {
+        if (tutStep < tutConfig.length - 1) showTutStep(tutStep + 1);
+        else endTutorial();
+    };
+}
+
+function endTutorial() {
+    SFX.click();
+    document.getElementById('tutorialOverlay').classList.add('hidden');
+    
+    // 徹底還原所有的狀態
+    document.querySelectorAll('.tut-highlight').forEach(el => { 
+        el.classList.remove('tut-highlight'); 
+        el.style.zIndex = ''; 
+        el.style.position = '';
+        const parentAction = el.closest('.side-actions');
+        if(parentAction) parentAction.style.zIndex = '';
+    });
+    
+    isTutorialMode = false;
+    document.getElementById('swipeGuide').style.display = 'flex';
+    startAlgorithmAnalysis(); 
+}
 
 function startTutorial() {
     document.getElementById('startModal').classList.remove('active');
@@ -904,28 +979,26 @@ function showEnding(choice) {
         desc.innerHTML = `非常棒的選擇！你第一步先<b>「截圖存證」</b>保留證據，第二步立刻<b>「檢舉對方」</b>。透過向平台或聯絡 iWIN，能有效要求下架不當內容，截斷惡意散播的鎖鏈。`;
     }
     
-    document.querySelectorAll('.learning-block').forEach(el => el.classList.remove('visible'));
-    document.getElementById('restartBtn').classList.add('hidden');
-    unlockedCount = 0;
+    // 直接顯示結算視窗 (移除了舊版的還原狀態程式碼)
     endModal.classList.add('active');
 }
 
-let unlockedCount = 0;
-function unlockLearning(id, btnElement) {
-    SFX.click();
-    const block = document.getElementById(id);
-    if (!block.classList.contains('visible')) {
-        block.classList.add('visible');
-        btnElement.classList.add('opacity-50', 'cursor-not-allowed', 'scale-95');
-        btnElement.innerHTML += ' <i class="fas fa-check-circle ml-1"></i>';
-        unlockedCount++;
-        
-        if(unlockedCount === 3) {
-            setTimeout(() => {
-                SFX.success();
-                document.getElementById('restartBtn').classList.remove('hidden');
-                document.getElementById('endCard').scrollTo({ top: document.getElementById('endCard').scrollHeight, behavior: 'smooth' });
-            }, 500);
-        }
-    }
+// 新增的結束體驗函式
+function finishExperience() {
+    SFX.success();
+    showToast("🎉 恭喜完成體驗！讓我們一起成為聰明的數位公民！");
+    
+    // 給予一個簡單的閉幕畫面，取代原本的整個應用程式 UI
+    setTimeout(() => {
+        document.getElementById('app').innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center p-8 bg-black">
+                <i class="fas fa-user-shield text-7xl text-green-500 mb-6 drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]"></i>
+                <h1 class="text-3xl font-black text-white mb-4">體驗完成</h1>
+                <p class="text-gray-300 text-sm leading-relaxed mb-8">你已經掌握了面對數位暴力的防身技巧。<br>請將這些知識落實於日常生活中！</p>
+                <button onclick="location.reload()" class="bg-gray-800 border border-gray-600 text-white font-bold px-6 py-2 rounded-full text-sm hover:bg-gray-700 transition">
+                    重新回到首頁
+                </button>
+            </div>
+        `;
+    }, 1200);
 }
