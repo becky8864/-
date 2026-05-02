@@ -63,9 +63,9 @@ const originalVideoData = [
     ]},
     { type: 'normal', dangerLevel: 0, author: '@CutePets_Daily', title: '我家黑金今天又在搞笑了🐶', imageUrl: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80', likes: 58000, commentsCount: 1420, comments: [
         { author: "愛狗人士", text: "融化了啦😍", likes: 120, isLiked: false, type: 'neutral' },
-        { author: "狗狗控", text: "阿金就是有一種魔力", likes: 85, isLiked: false, type: 'neutral' },
+        { author: "狗狗控", text: "黑金就是有一種魔力", likes: 85, isLiked: false, type: 'neutral' },
         { author: "鏟屎官日常", text: "我家那隻只會拆家🥲", likes: 210, isLiked: false, type: 'neutral' },
-        { author: "喵星人", text: "好可愛想捏", likes: 40, isLiked: false, type: 'neutral' }
+        { author: "汪星人", text: "好可愛想捏", likes: 40, isLiked: false, type: 'neutral' }
     ]},
     { type: 'toxic', dangerLevel: 1, author: '@School_Gossip', title: '匿名公審時間！班上誰最討人厭？😈👇', imageUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80', warning: true, likes: 8900, commentsCount: 512, hasPoll: true, pollTitle: "誰最討厭？", pollOptA: "A. 愛打小報告的阿翔", pollOptB: "B. 裝可愛的做作女", pollVoted: false, comments: [
         { author: "吃瓜小隊", text: "絕對是B啊，每天在那邊裝", likes: 125, isLiked: false, type: 'toxic' },
